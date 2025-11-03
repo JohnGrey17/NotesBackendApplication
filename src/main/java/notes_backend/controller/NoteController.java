@@ -11,12 +11,17 @@ import notes_backend.dto.note.create.NoteCreateRequestDto;
 import notes_backend.dto.note.create.NoteCreateResponseDto;
 import notes_backend.dto.note.update.NoteUpdateRequestDto;
 import notes_backend.dto.note.update.NoteUpdatedResponseDto;
-import notes_backend.service.note.NoteService;
+import notes_backend.service.note.NoteStatsService;
+import notes_backend.service.note.crud.NoteService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
+
+import static notes_backend.constant.PaginationConstants.DEFAULT_PAGE;
+import static notes_backend.constant.PaginationConstants.DEFAULT_SIZE;
 
 @RestController
 @RequestMapping("/notes")
@@ -25,6 +30,7 @@ import java.util.List;
 public class NoteController {
 
     private final NoteService noteService;
+    private final NoteStatsService noteStatsService;
 
     @PostMapping("/add")
     @Operation(summary = "Create a new note", description = "Adds a new note for a specific user")
@@ -34,11 +40,27 @@ public class NoteController {
                 .body(noteService.create(dto));
     }
 
-    @GetMapping("/getAll/userId/{userId}")
-    @Operation(summary = "Get notes by user ID",
-            description = "Retrieves all notes created by a specific user using userId")
-    public ResponseEntity<List<NoteResponseDto>> getAllByUserId(@PathVariable @Valid String userId) {
-        return ResponseEntity.ok(noteService.getAllByUserId(userId));
+    @GetMapping("/getAll/userId/{userId}/paged")
+    @Operation(summary = "Get paginated notes", description = "Returns paginated notes sorted by newest first")
+    public ResponseEntity<Page<NoteResponseDto>> getNotesByUserPaged(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "" + DEFAULT_PAGE) int page,
+            @RequestParam(defaultValue = "" + DEFAULT_SIZE) int size)  {
+        return ResponseEntity.ok(noteService.getAllNotesByUserId(userId, page, size));
+    }
+
+    @GetMapping("/getAll/tag/{tag}/paged")
+    @Operation(
+            summary = "Get paginated notes by tag",
+            description = "Returns a paginated list of notes filtered by a specific tag. "
+                    + "If 'page' or 'size' not provided, defaults to page=0, size=10."
+    )
+    public ResponseEntity<Page<NoteResponseDto>> getAllByTagPaged(
+            @PathVariable notes_backend.entity.note.Tag tag,
+            @RequestParam(defaultValue = "" + DEFAULT_PAGE) int page,
+            @RequestParam(defaultValue = "" + DEFAULT_SIZE) int size) {
+
+        return ResponseEntity.ok(noteService.getAllByTag(tag, page, size));
     }
 
     @GetMapping("/getContent/noteId/{noteId}")
@@ -48,11 +70,16 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.OK).body(noteService.getNoteContentById(noteId));
     }
 
-    @GetMapping("/getId/userId/{userId}")
-    @Operation(summary = "Get note id",
-            description = "Provide list of notes id by user id")
-    public ResponseEntity<List<NoteIdResponseDto>> getAllNoteId(@PathVariable @Valid String userId) {
-        return ResponseEntity.ok(noteService.getAllNoteIdsByUserId(userId));
+    @GetMapping("/getId/userId/{userId}/paged")
+    @Operation(
+            summary = "Get paginated note IDs by user ID",
+            description = "Returns paginated list of note IDs for a specific user, sorted by newest first"
+    )
+    public ResponseEntity<Page<NoteIdResponseDto>> getAllNoteIdsByUserId(
+            @PathVariable @Valid String userId,
+            @RequestParam(defaultValue = "" + DEFAULT_PAGE) int page,
+            @RequestParam(defaultValue = "" + DEFAULT_SIZE) int size) {
+        return ResponseEntity.ok(noteService.getAllNoteIdsByUserId(userId, page, size));
     }
 
     @PatchMapping("/update/noteId/{noteId}")
@@ -69,5 +96,15 @@ public class NoteController {
     public ResponseEntity<Void> deleteByNoteId(@PathVariable @Valid String noteId) {
         noteService.deleteNoteById(noteId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/stats/{noteId}")
+    @Operation(
+            summary = "Get word statistics for note",
+            description = "Returns frequency of unique words in note text sorted descending"
+    )
+    public ResponseEntity<Map<String, Long>> getWordStatsByNoteId(
+            @PathVariable @Valid String noteId) {
+        return ResponseEntity.ok(noteStatsService.getWordStatsByNoteId(noteId));
     }
 }
