@@ -1,5 +1,6 @@
 package notes_backend.exception.hendler;
 
+import notes_backend.exception.type.NoteException;
 import notes_backend.exception.type.UserException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +42,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler({
-            UserException.class
+            UserException.class,
+            NoteException.class
 
 
 
