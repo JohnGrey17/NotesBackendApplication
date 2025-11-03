@@ -1,4 +1,4 @@
-package notes_backend.service;
+package notes_backend.service.user;
 
 import notes_backend.dto.user.UserRegistrationRequestDto;
 import notes_backend.dto.user.UserRegistrationResponseDto;

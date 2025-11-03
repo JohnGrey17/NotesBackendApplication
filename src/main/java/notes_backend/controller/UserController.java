@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import notes_backend.dto.user.UserRegistrationRequestDto;
 import notes_backend.dto.user.UserRegistrationResponseDto;
 import notes_backend.dto.user.UserResponseDto;
-import notes_backend.service.UserService;
+import notes_backend.service.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

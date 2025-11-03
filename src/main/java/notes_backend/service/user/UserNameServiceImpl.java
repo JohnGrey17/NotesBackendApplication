@@ -1,4 +1,4 @@
-package notes_backend.service;
+package notes_backend.service.user;
 
 import lombok.RequiredArgsConstructor;
 import notes_backend.dto.user.UserRegistrationRequestDto;

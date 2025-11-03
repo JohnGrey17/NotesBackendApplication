@@ -1,4 +1,4 @@
-package notes_backend.service.note;
+package notes_backend.service.note.component;
 
 import lombok.RequiredArgsConstructor;
 import notes_backend.dto.note.update.NoteUpdateRequestDto;

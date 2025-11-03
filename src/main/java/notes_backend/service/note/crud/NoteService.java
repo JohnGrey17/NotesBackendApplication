@@ -1,19 +1,20 @@
-package notes_backend.service.note;
+package notes_backend.service.note.crud;
 
-import jakarta.validation.Valid;
 import notes_backend.dto.note.*;
 import notes_backend.dto.note.create.NoteCreateRequestDto;
 import notes_backend.dto.note.create.NoteCreateResponseDto;
 import notes_backend.dto.note.update.NoteUpdateRequestDto;
 import notes_backend.dto.note.update.NoteUpdatedResponseDto;
-
-import java.util.List;
+import notes_backend.entity.note.Tag;
+import org.springframework.data.domain.Page;
 
 public interface NoteService {
 
     NoteCreateResponseDto create(NoteCreateRequestDto requestDto);
 
-    List<NoteResponseDto> getAllByUserId(String userId);
+    Page<NoteResponseDto> getAllNotesByUserId(String userId, int page, int size);
+
+    public Page<NoteResponseDto> getAllByTag(Tag tag, int page, int size);
 
     NoteUpdatedResponseDto updateNoteById(String noteId, NoteUpdateRequestDto requestDto);
 
@@ -21,5 +22,5 @@ public interface NoteService {
 
     NoteContentResponseDto getNoteContentById(String noteId);
 
-    List<NoteIdResponseDto> getAllNoteIdsByUserId(String userId);
+    Page<NoteIdResponseDto> getAllNoteIdsByUserId(String userId, int page, int size);
 }
