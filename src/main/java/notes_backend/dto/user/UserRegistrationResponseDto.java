@@ -9,5 +9,7 @@ import lombok.ToString;
 @ToString
 public class UserRegistrationResponseDto {
 
+    private String id;
+
     private String userName;
 }
